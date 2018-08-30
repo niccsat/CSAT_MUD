@@ -71,6 +71,8 @@ while True:
         players[id] = {
             "name": None,
             "room": None,
+            "credits": 100,
+            "inventory": [],
         }
 
         # send the new player a prompt for their name
