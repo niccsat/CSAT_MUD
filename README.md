@@ -1,3 +1,18 @@
+CSAT MUD
+===
+
+Todo:
+- add rooms
+- add combat
+- add economy (money, resources)
+- add NPCs
+
+
+
+
+FROM FORKED REPO (for reference)
+===
+
 MUD Pi
 ======
 
