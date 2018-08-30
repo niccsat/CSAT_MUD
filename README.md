@@ -8,7 +8,7 @@ Raspberry Pi or other low-end server.
 Requirements
 ------------
 
-You will need to install _Python_ (2.7+ or 3.3+) where you wish to run the 
+You will need to install _Python_ (3.6) where you wish to run the 
 server. Installers for Windows and Mac can be found at 
 <http://www.python.org/download/>. There are also tarballs for Linux, although 
 the best way to install on Linux would be via the package manager.
