@@ -26,22 +26,11 @@ import time
 # import the MUD server class
 from mudserver import MudServer
 
+# import rooms from rooms.py
+from rooms import rooms
 
-# structure defining the rooms in the game. Try adding more rooms to the game!
-rooms = {
-    "Tavern": {
-        "description": "You're in a cozy tavern warmed by an open fire.",
-        "exits": {"outside": "Outside"},
-        "items": ["Blaster","StimPack"],
-        "tools": ["Sink","Towel"],
-    },
-    "Outside": {
-        "description": "You're standing outside a tavern. It's raining.",
-        "exits": {"inside": "Tavern"},
-        "items":[],
-        "tools":[],
-    }
-}
+# import items from items.py
+from items import items
 
 # stores the players in the game
 players = {}
