@@ -1,13 +1,13 @@
 rooms = {
-    "Tavern": {
-        "description": "You're in a cozy tavern warmed by an open fire.",
-        "exits": {"outside": "Outside"},
+    "Lab": {
+        "description": "You're in a white room filled with chemistry equipment.",
+        "exits": {"hallway": "Hallway"},
         "items": ["Blaster","StimPack"],
-        "tools": ["Sink","Towel"],
+        "tools": ["Boiler","Towel","Workbench"],
     },
-    "Outside": {
-        "description": "You're standing outside a tavern. It's raining.",
-        "exits": {"inside": "Tavern"},
+    "Hallway": {
+        "description": "You're standing in a white hallway.",
+        "exits": {"lab": "Lab"},
         "items":[],
         "tools":[],
     }
