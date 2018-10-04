@@ -9,4 +9,8 @@ items = {
         "damage": 1,
         "value": 25,
     },
+    "Watermelon":{
+        "description": "A green and red melon.",
+        "damage": 15,
+        "value": 150,
 }
