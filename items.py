@@ -8,5 +8,5 @@ items = {
         "description": "An ingot of very strong metal.",
         "damage": 1,
         "value": 25,
-        
+    },
 }
