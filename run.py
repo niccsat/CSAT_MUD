@@ -98,7 +98,7 @@ while True:
         if players[id]["name"] is None:
 
             players[id]["name"] = command
-            players[id]["room"] = "Tavern"
+            players[id]["room"] = "Hub 1 Center"
 
             # go through all the players in the game
             for pid, pl in players.items():
