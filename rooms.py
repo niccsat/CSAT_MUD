@@ -1,7 +1,7 @@
 rooms = {
     "Hub 1 Center": {
         "description": "You are standing on on a dirt road intersection.  There is a large town around you.  To your left, a small cart sells melons.",
-        "exits": {"west": "Road 1"},
+        "exits": {"west": "Road 1", "east": "Road 2"},
         "items": [],
         "tools": [],
         "npc": ["Melon Shop 1"],
@@ -19,5 +19,12 @@ rooms = {
         "items":[],
         "tools":[],
         "npc": ["Arms Shop 1"],
+    },
+    "Road 2": {
+        "description": "You're standing on a dirt road.",
+        "exits": {"west": "Hub 1 Center"},
+        "items":[],
+        "tools":[],
+        "npc": [],
     },
 }
