@@ -13,4 +13,5 @@ items = {
         "description": "A green and red melon.",
         "damage": 15,
         "value": 150,
+        },
 }

@@ -32,6 +32,11 @@ from rooms import rooms
 # import items from items.py
 from items import items
 
+# import npcs from npcs.py
+from npcs import npcs
+
+print(npcs)
+
 # stores the players in the game
 players = {}
 
@@ -62,6 +67,7 @@ while True:
             "room": None,
             "credits": 100,
             "inventory": [],
+            "npcChosen": "",
         }
 
         # send the new player a prompt for their name
@@ -162,10 +168,114 @@ while True:
             # send player a message containing the list of players in the room
             mud.send_message(id, "Players here: {}".format(
                                                     ", ".join(playershere)))
+            
+                        # send player a message containing the list of npcs in the room
+            mud.send_message(id, "NPCs here: {}".format(
+                                                    ", ".join(rm["npcs"])))
 
             # send player a message containing the list of exits from this room
             mud.send_message(id, "Exits are: {}".format(
                                                     ", ".join(rm["exits"])))
+
+        # 'npc' command
+        elif command == "npc":
+            print("npc")
+            
+            # store the npc name
+            ex = params.lower()
+            
+            rm = rooms[players[id]["room"]]
+
+            # handles KeyErrors somehow
+            if npcs[ex]["type"] in npcs:
+                npcType = npcs[ex]["type"]
+
+            try:
+                npcType = npcs[ex]["type"]
+                players[id]["npcChosen"] = ex
+
+            except KeyError:
+                pass
+
+            # if the npc is in the current room's npc list 
+            if ex in rm["npcs"]:
+                print("npc found")
+
+                # find the type of npc
+                if npcType == "shop":
+                    print("shop")
+                    mud.send_message(id, "Items for sale are:")
+                    indexnum = 0
+
+                    # send the player the items for sale 
+                    for i in npcs[ex]["items"]:
+                        print("for")
+                        mud.send_message(id, str(npcs[ex]["items"]))
+
+
+        # 'buy' command
+        elif command == "buy":
+            ex =  params.lower()
+            rm = rooms[players[id]["room"]]
+
+            # boolean for if npc is in current room
+            npcsThere = False
+
+            # checking if npc is in current room; prevents KeyErrors
+            if players[id]["npcChosen"] in npcs:
+                npcsThere = True
+
+            else:
+                npcsThere = False
+
+            # check if the chosen item is in the currently selected npcs inventory
+            if npcsThere and ex in npcs[players[id]["npcChosen"]]["items"]:
+
+                # check if the price of the item is credits or an item
+                if not(isinstance(npcs[players[id]["npcChosen"]]["items"][ex] ,int)):
+
+                    print(str(npcs[players[id]["npcChosen"]]["items"][ex]))
+
+
+                    # check if the player has the item in his/her inventory
+                    if npcs[players[id]["npcChosen"]]["items"][ex] in players[id]["inventory"]:
+
+                        # take the item from the player
+                        players[id]["inventory"].remove(npcs[players[id]["npcChosen"]]["items"][ex])
+
+                        # give the player the purchased item
+                        players[id]["inventory"].append(ex)
+                        mud.send_message(id, ex + " succesfully purchased!")
+                    else:
+                        mud.send_message(id, "You do not have enough to purchase this item.")
+
+                else:
+                    # check if the player has enough money
+                    if npcs[players[id]["npcChosen"]]["items"][ex] < players[id]["credits"]:
+
+                        # take the money from the player
+                        players[id]["credits"] = players[id]["credits"] - npcs[players[id]["npcChosen"]]["items"][ex]
+
+                        # give the player the purchased item
+                        players[id]["inventory"].append(ex)
+                        mud.send_message(id, ex + " succesfully purchased!")
+                    else:
+                        mud.send_message(id, "You do not have enough to purchase this item.  The item costs: " + str(npcs[players[id]["npcChosen"]]["items"][ex]))
+                        print(str(npcs[players[id]["npcChosen"]]["items"][ex]))
+            else:
+                mud.send_message(id, "Item not found.")
+                    
+
+        # 'inventory' command
+        elif command == "inventory":
+            ex = params.lower()
+
+            # send the player inventory list
+            mud.send_message(id, str(players[id]["inventory"]))
+
+            # send the player credits count
+            mud.send_message(id, "You have " + str(players[id]["credits"]) + " credits.")
+
 
         # 'go' command
         elif command == "go":
@@ -192,6 +302,7 @@ while True:
 
                 # update the player's current room to the one the exit leads to
                 players[id]["room"] = rm["exits"][ex]
+                players[id]["npcChosen"] = ""
                 rm = rooms[players[id]["room"]]
 
                 # go through all the players in the game
