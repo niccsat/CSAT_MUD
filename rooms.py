@@ -25,6 +25,6 @@ rooms = {
         "exits": {"west": "Hub 1 Center"},
         "items":[],
         "tools":[],
-        "npcs": [],
+        "npcs": ["jordan harrison"],
     },
 }

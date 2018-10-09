@@ -200,6 +200,7 @@ while True:
             # if the npc is in the current room's npc list 
             if ex in rm["npcs"]:
                 print("npc found")
+                mud.send_message(id, npcs[players[id]["npcChosen"]]["quote"])
 
                 # find the type of npc
                 if npcType == "shop":
@@ -211,6 +212,9 @@ while True:
                     for i in npcs[ex]["items"]:
                         print("for")
                         mud.send_message(id, str(npcs[ex]["items"]))
+
+                elif npcType == "dialogue":
+                    mud.send_message(id, npcs[players[id]["npcChosen"]]["quote2"])
 
 
         # 'buy' command

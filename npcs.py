@@ -9,4 +9,9 @@ npcs = {
         "type": "shop",
         "items": {"plasma dagger": 35},
     },
+    "jordan harrison": {
+        "quote": "Howdy partner!",
+        "type": "dialogue",
+        "quote2": "How are you doing?",
+        },
 }
