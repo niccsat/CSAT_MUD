@@ -23,5 +23,15 @@ npcs = {
         "quote": "Howdy partner!",
         "type": "dialogue",
         "quote2": "How are you doing?",
-        },
+    },
+    "medshop 1": {
+        "quote": "*cough* *cough* 'I've got whatcha lookin for' *cough*",
+        "type": "shop",
+        "items": {"speedstim": 10},  
+    },
+    "foodmart 1": {
+        "quote": "Welcome to FoodMart, your ONLY source for food on _planetName_",
+        "type": "shop",
+        "items": {"ration": 5},  
+    },
 }

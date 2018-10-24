@@ -22,6 +22,7 @@ author: Mark Frimston - mfrimston@gmail.com
 """
 
 import time
+import random
 
 # import the MUD server class
 from mudserver import MudServer
@@ -35,7 +36,6 @@ from items import items
 # import npcs from npcs.py
 from npcs import npcs
 
-print(npcs)
 
 # stores the players in the game
 players = {}
@@ -66,8 +66,16 @@ while True:
             "name": None,
             "room": None,
             "credits": 100,
-            "inventory": [],
+            "inventory": ["xp booster", "watermelon", "xp booster"],
             "npcChosen": "",
+            "xp": 0,
+            "level": 1,
+            "maxHp": 15,
+            "hp": 15,
+            "atk": 3,
+            "def": 1,
+            "spd": 7,
+            "currentAttackTime": 0,
         }
 
         # send the new player a prompt for their name
@@ -172,6 +180,8 @@ while True:
                         # send player a message containing the list of npcs in the room
             mud.send_message(id, "NPCs here: {}".format(
                                                     ", ".join(rm["npcs"])))
+            mud.send_message(id, "Entities here: {}".format(
+                                        ", ".join(rm["entities"])))
 
             # send player a message containing the list of exits from this room
             mud.send_message(id, "Exits are: {}".format(
@@ -280,6 +290,108 @@ while True:
             # send the player credits count
             mud.send_message(id, "You have " + str(players[id]["credits"]) + " credits.")
 
+        # 'stats' command
+        elif command == "stats":
+            ex = params.lower()
+            mud.send_message(id, "Name: " + players[id]["name"])
+            mud.send_message(id,"Level " + str(players[id]["level"]))
+            mud.send_message(id, str(players[id]["hp"]) + " HP")
+            mud.send_message(id, str(players[id]["atk"]) + " attack")
+            mud.send_message(id, str(players[id]["def"]) + " defense")
+            mud.send_message(id, str(players[id]["spd"]) + " speed")
+            mud.send_message(id, str(players[id]["xp"]) + " xp")
+            
+
+        # 'consume' command
+        elif command == "consume":
+            ex = params.lower()
+            if ex in players[id]["inventory"] and items[ex]["type"] == "consumable":
+                if "upStat" in items[ex]:
+                    print("itemfound")
+                    players[id][items[ex]["upStat"]] = players[id][items[ex]["upStat"]] + items[ex]["upAmount"]
+                    players[id]["inventory"].remove(ex)
+                    mud.send_message(id, "Consumed " + ex)
+                    if players[id]["hp"] > players[id]["maxHp"]:
+                        players[id]["hp"] = players[id]["maxHp"]
+                else:
+                    print("item not found")
+
+
+        # 'attack' command
+        elif command == "attack":
+            try:
+                ex = params.lower()
+                rm = rooms[players[id]["room"]]
+                playerAttackTime = players[id]["spd"]
+                enemyAttackTime = rm["entities"][ex]["spd"]
+                currentAttackTime = players[id]["currentAttackTime"]
+                playerAttackNum = 1
+                enemyAttackNum = 1
+
+
+            
+                # find if entity is still in room
+                while ex in rm["entities"]:
+
+                    # random attack hit generator.  Higher speed, less accuracy.
+                    if 1 == random.randint(0,playerAttackTime):
+                        playerAttackNum = playerAttackNum + 1
+                        print("attack " + str(playerAttackNum))
+                        # basic player attack script
+                        rm["entities"][ex]["hp"] = rm["entities"][ex]["hp"] - (players[id]["atk"] - rm["entities"][ex]["def"])
+                        mud.send_message(id, "You did " +str((players[id]["atk"] - rm["entities"][ex]["def"])) + " damage.")
+                        time.sleep(1)
+
+                        #check if enemy died
+                        if rm["entities"][ex]["hp"] <= 0:
+                            mud.send_message(id, "You killed " + rm["entities"][ex]["name"])
+                            del rm["entities"][ex]
+
+                    elif 1 == random.randint(0,enemyAttackTime):
+                        enemyAttackNum = enemyAttackNum + 1
+                        # enemy attack
+
+                        #say how much damage was done
+                        mud.send_message(id, rm["entities"][ex]["name"] + " attacked you for " + str(rm["entities"][ex]["atk"]-players[id]["def"]) + " damage!")
+
+                        #subtract players hp by the enemies attack minus players defense
+                        players[id]["hp"] = players[id]["hp"] - (rm["entities"][ex]["atk"] - players[id]["def"])
+                        time.sleep(1)
+
+                        #check if player died
+                        if players[id]["hp"] <= 0:
+                            mud.send_message(id, "You died. X_X")
+
+                    
+
+                    # no one attacked
+                    else:
+                        # update ticker by one
+                        time.sleep(1)
+                        currentAttackTime = currentAttackTime + 1
+
+            except KeyError:
+                mud.send_message(id, "Unknown target")
+                    
+        # 'level' command
+        elif command == "level":
+
+            ex =  params.lower()
+
+            if players[id]["xp"] >= players[id]["level"] * 100:
+                players[id]["level"] = players[id]["level"] + 1
+                players[id]["xp"] =  players[id]["xp"] - ((players[id]["level"]-1) * 100)
+                mud.send_message(id, "Levelled up to level :" + str(players[id]["level"]))
+                mud.send_message(id, "You now have  " + str(players[id]["xp"]) + " xp.")
+                players[id]["hp"] = players[id]["maxHp"]
+
+            else:
+                mud.send_message(id, "You do not have enough xp.")
+                mud.send_message(id, "You need a total of " + str(players[id]["level"] * 100) + " xp to level up.")
+
+
+
+
 
         # 'go' command
         elif command == "go":
@@ -306,7 +418,9 @@ while True:
 
                 # update the player's current room to the one the exit leads to
                 players[id]["room"] = rm["exits"][ex]
+                newRoom = rm["exits"][ex]
                 players[id]["npcChosen"] = ""
+                players[id]["currentAttackTime"] = 0
                 rm = rooms[players[id]["room"]]
 
                 # go through all the players in the game
